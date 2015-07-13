@@ -1,6 +1,9 @@
 Django==1.8.3
 django-extensions==1.5.5
+django-flat-theme==0.9.5
 django-tastypie==0.12.1
+ipdb==0.8.1
+ipython==3.2.1
 Pillow==2.9.0
 python-dateutil==2.4.2
 python-mimeparse==0.1.4

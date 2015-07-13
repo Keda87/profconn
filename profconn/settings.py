@@ -30,6 +30,8 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 DJANGO_APPS = [
+    'flat',  # For third party admin package.
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
