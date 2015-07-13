@@ -23,19 +23,25 @@ class CommonInfo(models.Model):
 
 class Experience(CommonInfo):
     """Model contains professional experience."""
-    company = models.ForeignKey('companies.Company')
-    company_text = models.CharField(max_length=120)
+    company = models.ForeignKey('companies.Company', null=True, blank=True)
+    company_text = models.CharField(max_length=120, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField()
     # Determine if user currently working in the company
     is_present = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return self.company.name
+
 
 class Information(CommonInfo):
     """Model contains professional information for the ID card."""
     headline = models.CharField(max_length=120)
     bio = models.TextField()
+
+    def __unicode__(self):
+        return self.headline
 
 
 class Person(CommonInfo):
@@ -58,5 +64,3 @@ class Person(CommonInfo):
                                           'username': self.email})
             self.user = user
         super(Person, self).save(**kwargs)
-
-
