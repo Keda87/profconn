@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=254, validators=[django.core.validators.EmailValidator])),
                 ('phone', models.CharField(max_length=30)),
                 ('website', models.URLField(validators=[django.core.validators.URLValidator])),
-                ('logo', models.ImageField(height_field=50, width_field=50, upload_to='logos/%Y/%m/%d')),
+                ('logo', models.ImageField(height_field=50, width_field=50, upload_to='logos/%Y/%m/%d', blank=True)),
             ],
             options={
                 'verbose_name_plural': 'companies',

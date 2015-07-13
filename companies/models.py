@@ -36,7 +36,7 @@ class Company(CommonInfo):
     phone = models.CharField(max_length=30)
     website = models.URLField(validators=[URLValidator])
     logo = models.ImageField(height_field=50, width_field=50,
-                             upload_to=u'logos/%Y/%m/%d')
+                             upload_to=u'logos/%Y/%m/%d', blank=True)
 
     def __unicode__(self):
         return self.name
