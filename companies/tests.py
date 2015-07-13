@@ -45,6 +45,15 @@ class CompanyTest(TestCase):
         company2.delete()
         self.assertEquals(2, Company.objects.all().count())
 
+    def test_soft_delete_company(self):
+        company2 = Company.objects.get(name='Company II')
+        self.assertEquals('Company II', company2.name)
+
+        company2.is_deleted = True
+        company2.save()
+        self.assertEquals(True, company2.is_deleted)
+        self.assertEquals(1, Company.objects.filter(is_deleted=True).count())
+
     def test_update_company(self):
         company1 = Company.objects.get(name='Company I')
         self.assertEquals('Company I', company1.name)

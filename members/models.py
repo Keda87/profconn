@@ -47,7 +47,8 @@ class Person(CommonInfo):
 
 class Experience(CommonInfo):
     """Model contains professional experience."""
-    company = models.ForeignKey('companies.Company', null=True, blank=True)
+    company = models.ForeignKey('companies.Company', null=True, blank=True,
+                                related_name='+')
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField(blank=True)
