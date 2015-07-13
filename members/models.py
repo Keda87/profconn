@@ -21,37 +21,16 @@ class CommonInfo(models.Model):
         abstract = True
 
 
-class Experience(CommonInfo):
-    """Model contains professional experience."""
-    company = models.ForeignKey('companies.Company', null=True, blank=True)
-    company_text = models.CharField(max_length=120, blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
-    description = models.TextField()
-    # Determine if user currently working in the company
-    is_present = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return self.company.name
-
-
-class Information(CommonInfo):
-    """Model contains professional information for the ID card."""
-    headline = models.CharField(max_length=120)
-    bio = models.TextField()
-
-    def __unicode__(self):
-        return self.headline
-
-
 class Person(CommonInfo):
     """Model contains registered user basic information."""
     user = models.OneToOneField(User)
     name = models.CharField(max_length=120)
     birth = models.DateField()
     email = models.EmailField(validators=[EmailValidator])
-    information = models.OneToOneField(Information, null=True, blank=True)
-    profile_picture = models.ImageField(upload_to=profile_stored)
+    profile_picture = models.ImageField(upload_to=profile_stored, blank=True)
+
+    headline = models.CharField(max_length=120, blank=True)
+    bio = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.email
@@ -64,3 +43,23 @@ class Person(CommonInfo):
                                           'username': self.email})
             self.user = user
         super(Person, self).save(**kwargs)
+
+
+class Experience(CommonInfo):
+    """Model contains professional experience."""
+    company = models.ForeignKey('companies.Company', null=True, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    description = models.TextField(blank=True)
+    # Determine if user currently working in the company
+    is_present = models.BooleanField(default=False)
+    person = models.ForeignKey(Person)
+
+    def __unicode__(self):
+        return self.company.name
+
+    def save(self, **kwargs):
+        # Check if `end_date` not filled, then set as present.
+        if self.end_date is None:
+            self.is_present = True
+        super(Experience, self).save(**kwargs)
