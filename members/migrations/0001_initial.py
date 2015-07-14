@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import members.models
-import members.validators
 from django.conf import settings
 import django.core.validators
 import uuid
@@ -20,11 +19,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Experience',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('uuid', models.UUIDField(default=uuid.uuid4, unique=True, editable=False)),
+                ('uuid', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
+                ('role', models.CharField(max_length=120, blank=True)),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField(null=True, blank=True)),
                 ('description', models.TextField(blank=True)),
@@ -38,18 +37,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('uuid', models.UUIDField(default=uuid.uuid4, unique=True, editable=False)),
+                ('uuid', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=120)),
                 ('birth', models.DateField()),
-                ('email', models.EmailField(max_length=254, validators=[members.validators.unique_registered_email, django.core.validators.EmailValidator])),
+                ('email', models.EmailField(unique=True, max_length=254, validators=[django.core.validators.EmailValidator])),
                 ('profile_picture', models.ImageField(upload_to=members.models.profile_stored, blank=True)),
                 ('is_verified', models.BooleanField(default=False)),
                 ('headline', models.CharField(max_length=120, blank=True)),
                 ('bio', models.TextField(blank=True)),
+                ('connections', models.ManyToManyField(related_name='connections_rel_+', null=True, to='members.Person', blank=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={

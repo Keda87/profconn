@@ -13,7 +13,7 @@ def profile_stored(instance, filename):
 
 
 class CommonInfo(models.Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)  # For soft delete.
@@ -36,9 +36,10 @@ class Person(CommonInfo):
     user = models.OneToOneField(User)
     name = models.CharField(max_length=120)
     birth = models.DateField()
-    email = models.EmailField(validators=[unique_registered_email, EmailValidator])
+    email = models.EmailField(unique=True, validators=[EmailValidator])
     profile_picture = models.ImageField(upload_to=profile_stored, blank=True)
     is_verified = models.BooleanField(default=False)
+    connections = models.ManyToManyField('self', null=True, blank=True)
 
     headline = models.CharField(max_length=120, blank=True)
     bio = models.TextField(blank=True)
@@ -68,6 +69,7 @@ class Experience(CommonInfo):
     """Model contains professional experience."""
     company = models.ForeignKey('companies.Company', null=True, blank=True,
                                 related_name='+')
+    role = models.CharField(max_length=120, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField(blank=True)
@@ -79,6 +81,7 @@ class Experience(CommonInfo):
         return self.company.name
 
     def save(self, **kwargs):
+        self.role = self.role.title()
         # Check if `end_date` not filled, then set as present.
         if self.end_date is None:
             self.is_present = True
