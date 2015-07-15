@@ -16,13 +16,22 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-# from companies.apis import CompanyResource
+from rest_framework.routers import DefaultRouter
 
-# Rest API
-# company_api = CompanyResource()
+from companies.views import CompanyViewSet
+from members.views import PersonViewSet, ExperienceViewSet, ConnectionViewSet
 
+# REST API
+router = DefaultRouter()
+router.register(r'persons', PersonViewSet)
+router.register(r'experiences', ExperienceViewSet)
+router.register(r'connections', ConnectionViewSet)
+router.register(r'companies', CompanyViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    # url(r'^api/', include(company_api.urls))
+
+    # REST API
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/', include(router.urls, namespace='api')),
 ]

@@ -41,7 +41,8 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'django_extensions'
+    'django_extensions',
+    'rest_framework'
 ]
 
 LOCAL_APPS = [
@@ -129,6 +130,11 @@ MEDIA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "medi
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
+
+# REST API Settings.
+REST_FRAMEWORK = {
+    'PAGINATE_BY': 10
+}
 
 try:
     LOCAL_SETTINGS

@@ -13,7 +13,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ['name', 'email']
     search_fields = list_display
     fieldsets = [
-        (None,          {'fields': ['name', 'email', 'birth']}),
+        (None,          {'fields': ['name', 'email', 'birth', 'profile_picture']}),
         ('Information', {'fields': ['headline', 'bio'], 'classes': ['collapse']}),
     ]
     inlines = [ExperienceTab]
