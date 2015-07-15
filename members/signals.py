@@ -26,7 +26,7 @@ def signal_send_user_email(sender, instance, created, **kwargs):
         Profconn Team.
         '''.format(user=instance.name,
                    username=instance.user.username,
-                   password=instance.user.password)
+                   password=instance.plain_password)
 
         # Send verification email and default password.
         send_mail(subject, message, from_email, recipients, fail_silently=True)

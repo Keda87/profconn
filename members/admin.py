@@ -15,7 +15,6 @@ class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,          {'fields': ['name', 'email', 'birth']}),
         ('Information', {'fields': ['headline', 'bio'], 'classes': ['collapse']}),
-        ('Connection',  {'fields': ['connections'], 'classes': ['collapse']})
     ]
     inlines = [ExperienceTab]
 

@@ -17,9 +17,21 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Connection',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uuid', models.UUIDField(default=uuid.uuid4, unique=True, editable=False)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('is_deleted', models.BooleanField(default=False)),
+                ('status', models.PositiveSmallIntegerField(default=None, null=True, choices=[(0, 'Unblock'), (1, 'Blocked'), (2, 'Requested'), (3, 'Approved'), (4, 'Declined')])),
+            ],
+        ),
+        migrations.CreateModel(
             name='Experience',
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uuid', models.UUIDField(default=uuid.uuid4, unique=True, editable=False)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
@@ -37,7 +49,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uuid', models.UUIDField(default=uuid.uuid4, unique=True, editable=False)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
@@ -48,7 +61,7 @@ class Migration(migrations.Migration):
                 ('is_verified', models.BooleanField(default=False)),
                 ('headline', models.CharField(max_length=120, blank=True)),
                 ('bio', models.TextField(blank=True)),
-                ('connections', models.ManyToManyField(related_name='connections_rel_+', null=True, to='members.Person', blank=True)),
+                ('connections', models.ManyToManyField(to='members.Person', through='members.Connection', blank=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -59,5 +72,19 @@ class Migration(migrations.Migration):
             model_name='experience',
             name='person',
             field=models.ForeignKey(to='members.Person'),
+        ),
+        migrations.AddField(
+            model_name='connection',
+            name='friend',
+            field=models.ForeignKey(related_name='friend', to='members.Person'),
+        ),
+        migrations.AddField(
+            model_name='connection',
+            name='person',
+            field=models.ForeignKey(related_name='requester', to='members.Person'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='connection',
+            unique_together=set([('person', 'friend')]),
         ),
     ]

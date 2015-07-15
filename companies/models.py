@@ -6,7 +6,7 @@ from django.core.validators import EmailValidator, URLValidator
 
 
 class CommonInfo(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)  # For soft delete.

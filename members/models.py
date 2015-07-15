@@ -1,9 +1,10 @@
 import uuid
-from django.db import models
-from django.contrib.auth.models import User
-from django.core.validators import EmailValidator
 
-from .validators import unique_registered_email
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+from django.core.validators import EmailValidator
+from django.utils.translation import ugettext as _
 
 
 def profile_stored(instance, filename):
@@ -13,7 +14,7 @@ def profile_stored(instance, filename):
 
 
 class CommonInfo(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)  # For soft delete.
@@ -33,14 +34,15 @@ class Person(CommonInfo):
         Description : Sending email to new registered user to send default
                       password.
     """
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=120)
     birth = models.DateField()
     email = models.EmailField(unique=True, validators=[EmailValidator])
     profile_picture = models.ImageField(upload_to=profile_stored, blank=True)
     is_verified = models.BooleanField(default=False)
-    connections = models.ManyToManyField('self', null=True, blank=True)
-
+    connections = models.ManyToManyField('self', through='Connection',
+                                         symmetrical=False, blank=True,
+                                         through_fields=('person', 'friend',),)
     headline = models.CharField(max_length=120, blank=True)
     bio = models.TextField(blank=True)
 
@@ -62,7 +64,31 @@ class Person(CommonInfo):
             self.user = user
             self.email = self.email.lower()
             self.name = self.name.title()
+            self.plain_password = password  # extra field (not saved in database).
         super(Person, self).save(**kwargs)
+
+
+class Connection(CommonInfo):
+    """Intermediate table for many to many relationship person for friendship."""
+    UNBLOCK, BLOCKED, REQUESTED, APPROVED, DECLINED = range(5)
+    FRIENDSHIP_STATUS_CHOICES = (
+        (UNBLOCK, _('Unblock')),
+        (BLOCKED, _('Blocked')),
+        (REQUESTED, _('Requested')),
+        (APPROVED, _('Approved')),
+        (DECLINED, _('Declined')),
+    )
+
+    person = models.ForeignKey(Person, related_name='requester')
+    friend = models.ForeignKey(Person, related_name='friend')
+    status = models.PositiveSmallIntegerField(choices=FRIENDSHIP_STATUS_CHOICES,
+                                              null=True, default=None)
+
+    class Meta:
+        unique_together = ('person', 'friend',)
+
+    def __unicode__(self):
+        return self.person.name
 
 
 class Experience(CommonInfo):
