@@ -69,7 +69,42 @@ class Person(CommonInfo):
 
 
 class Connection(CommonInfo):
-    """Intermediate table for many to many relationship person for friendship."""
+    """
+    Intermediate table for many to many relationship person for friendship.
+
+    This model contains signal to perform task:
+    1.  Model       : Connection
+        Type        : post_save
+        location    : members.signals.signal_approve_connection
+        Description : Create reversed entry in Connection table after approving
+                      sent friend request.
+
+                      For example user A sent request to user B. In database
+                      supposed to be like this.
+                      ---------------------------------
+                      PERSON    |   FRIEND  |   Status
+                      A         |   B       |   REQUEST
+
+                      After user B approved A's request, status should be
+                      updated to APPROVED.
+                      ---------------------------------
+                      PERSON    |   FRIEND  |   Status
+                      A         |   B       |   APPROVED
+
+                      that means A & B is in connection.
+
+                      So we need add new entry.
+                      ---------------------------------
+                      PERSON    |   FRIEND  |   Status
+                      B         |   A       |   APPROVED
+
+                      Because A & B is in connection.
+
+    2.  Model       : Connection
+        Type        : post_delete
+        location    : members.signals.signal_unfriend_connection
+        Description : Delete related friendship connection.
+    """
     UNBLOCK, BLOCKED, REQUESTED, APPROVED, DECLINED = range(5)
     FRIENDSHIP_STATUS_CHOICES = (
         (UNBLOCK, _('Unblock')),
