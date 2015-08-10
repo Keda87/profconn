@@ -34,4 +34,6 @@ urlpatterns = [
     # REST API
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls, namespace='api')),
+    url(r'^api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'),
+    url(r'^api-docs/', include('rest_framework_swagger.urls'))
 ]

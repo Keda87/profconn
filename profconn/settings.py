@@ -42,7 +42,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'django_extensions',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework_swagger'
 ]
 
 LOCAL_APPS = [
@@ -133,7 +134,15 @@ MEDIA_URL = '/media/'
 
 # REST API Settings.
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 10
+    'PAGINATE_BY': 10,
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
 }
 
 try:
