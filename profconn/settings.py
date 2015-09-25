@@ -69,7 +69,9 @@ ROOT_URLCONF = 'profconn.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,9 +121,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+# DEPRECATED IN DJANGO 1.8
+# TEMPLATE_DIRS = (
+#     # os.path.join(BASE_DIR, 'templates'),
+#     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates")),
+# )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
