@@ -1,5 +1,7 @@
-from django.views.generic import TemplateView
+from django.views.generic.edit import FormView
 from django.shortcuts import render
+
+from .forms import SubscribeForm
 
 from rest_framework import viewsets
 
@@ -9,14 +11,19 @@ from .serializers import PersonSerializer, ConnectionSerializer, \
 from .models import Person, Connection, Experience
 
 
-class LandingPage(TemplateView):
-    """ Index page of profconn apps. """
-    template_name = 'members/index.html'
+class LandingPage(FormView):
+    """ Landing page of profconn apps. """
+    template_name = 'members/landing.html'
+    form_class = SubscribeForm
 
     def get(self, request):
-        context = {}
+        context = {
+            'form': self.form_class
+        }
         return render(request, self.template_name, context)
 
+    def form_valid(self, form):
+        return super(LandingPage, self).form_valid(form)
 
 # ---------------------------- Rest API views ----------------------------------
 class PersonViewSet(viewsets.ModelViewSet):
